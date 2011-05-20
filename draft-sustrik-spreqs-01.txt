@@ -1,0 +1,560 @@
+
+
+
+Internet Engineering Task Force                          M. Sustrik, Ed.
+Internet-Draft                                                April 2011
+Intended status: Informational
+Expires: October 3, 2011
+
+
+                Scalability Layer/Protocol Requirements
+                        draft-sustrik-spreqs-01
+
+Abstract
+
+   This memo argues that a simple layer aimed at scalability is needed
+   in the Internet stack and lists the requirements for such a layer.
+
+Status of this Memo
+
+   By submitting this Internet-Draft, each author represents that any
+   applicable patent or other IPR claims of which he or she is aware
+   have been or will be disclosed, and any of which he or she becomes
+   aware will be disclosed, in accordance with Section 6 of BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on October 3, 2011.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sustrik                  Expires October 3, 2011                [Page 1]
+
+Internet-Draft               SP Requirements                  April 2011
+
+
+1.  Introduction
+
+   Distributed computing have been around for a long time.  There is a
+   wide range of solutions ranging from HPC to enterprise messaging.
+   However, the landscape is changing.  In the recent years, thanks both
+   to dropping prices of hardware and to the advance of cloud computing,
+   the access to distributed computing infrastructure became commonplace
+   and affordable for everyone.  Along with this development, the model
+   of software-as-a-service is gaining traction, which means that the
+   applications are not monolithic anymore, but delegate part of their
+   functionality to other applications that live on the network.  Thus,
+   mostly unnoticed, complex distributed systems emerge.
+
+   This memo argues that old paradigm of complex, management-intensive
+   and costly "distributed computing for the rich" does not apply any
+   more.  In the world where a single freelance developer can easily
+   hire a large cluster of boxes for what is basically pennies the old-
+   school system of distributed computing infrastructure that takes
+   weeks to set up and a dedicated team of administrators to run is not
+   appropriate anymore.
+
+   What's needed is a simple lightweight network layer for distributed
+   computing that runs as smoothly and effortlessly as TCP and scales
+   well enough not to break in the world where distributed computing is
+   a norm rather than an exception.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sustrik                  Expires October 3, 2011                [Page 2]
+
+Internet-Draft               SP Requirements                  April 2011
+
+
+2.  Requirements
+
+   The distributed computing infrastructure proposed should meet the
+   following requirements:
+
+   a.  It should be part of the network stack.
+
+       Placing it anywhere else (stand-alone application, new OS
+       service, web service, etc.) raises the entry barrier above the
+       acceptable level.
+
+   b.  It should be standardised.
+
+       The very nature of distributed computing calls for
+       standardisation.  The system should work between different
+       operating systems, programming languages, microarchitectures,
+       across geographical and organisational boundaries etc.
+
+   c.  It should scale effortlessly.
+
+       With advent of distributed computing over the Internet (SaaS and
+       alike) the traditional LAN-sized scalability is insufficient.
+       Design of the system should guarantee that it won't break as
+       number of participants grows and topologies extend accross
+       network and organisational boundaries.
+
+   d.  It should be capable of down-scaling.
+
+       The system should scale down to the topology as simple as two
+       nodes communicating each with another.  There should be no
+       mandatory middle nodes (servers, brokers).  Obligatory middle
+       node raises the entry barrier in terms of both complexity and
+       cost to the unacceptable level.  However, it should be possible
+       to add middle nodes to the topology at any time to scale it up to
+       the desired size.  In other words, end-to-end principle should be
+       observed.
+
+   e.  It should duplicate no functionality.
+
+       As a fully integrated part of the network stack, the system
+       should provide no services that are available from other layers
+       of the stack.  While the requirement sounds self-evident, the
+       duplication problem is extremely severe with some distributed
+       computing solutions and thus the requirement should be explicitly
+       spelled out.
+
+   f.  It should work with different L4 protocols.
+
+
+
+
+Sustrik                  Expires October 3, 2011                [Page 3]
+
+Internet-Draft               SP Requirements                  April 2011
+
+
+       To address the needs of different industries, the system should
+       run on top of different L4 protocols: TCP (generic), SCTP
+       (telecom), UDP (gaming), reliable multicast (financial services)
+       etc.
+
+   g.  It should be abstracted to a functional level.
+
+       The entities handled by the system should reflect the function
+       within the application architecture rather than lower-layer
+       addressing schemes.  They should be "invoice processing service"
+       or "NASDAQ stock quote feed" rather than "192.168.0.111:5672" or
+       "this LAN".
+
+   h.  It should be lower layer aware.
+
+       The functional view as described above should be explicitly
+       mapped to lower layer network entities.  That would make it
+       possible to mechanically determine the function of the data on
+       the network layer and thus allow for things like reporting packet
+       volumes by function, traffic shaping by function, and perhaps
+       even firewall requirements between functions.
+
+   i.  The governance should be decentralised.
+
+       One of the goals is to use the system for communication between
+       organisations.  Given that few organisations are willing to cede
+       the governance of their infrastructure to someone else, the
+       governance model should be decentralised by design.  Each party
+       should govern its portion of the topology with no party having
+       power over the topology as a whole.
+
+   j.  It should integrate with existing distributed computing
+       solutions.
+
+       There is no lack of solutions and protocols for distributed
+       computing out there.  None of them, unfortunately, meets the
+       requirements above (the end-to-end requirement seems to be the
+       most significant obstacle).  To fully leverage the work already
+       done in the area as well as the existing deployment base mappings
+       from the proposed system to the individual deployed protocols/
+       solutions should be defined, at least as far as it is possible.
+
+       Two additional sub-requirements are:
+
+   k.  The mapping should not require any change to existing
+       implementations/protocols.  Rather it should define how to bridge
+       it to the system proposed in this memo.
+
+
+
+
+Sustrik                  Expires October 3, 2011                [Page 4]
+
+Internet-Draft               SP Requirements                  April 2011
+
+
+   l.  Using the mappings, the system should be capable of joining
+       heterogenous solutions/protocols into large scale topologies even
+       though said solutions/protocols themselves may not provide mutual
+       interoperability and/or unlimited scalability.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sustrik                  Expires October 3, 2011                [Page 5]
+
+Internet-Draft               SP Requirements                  April 2011
+
+
+3.  Background
+
+   These requirements are result of work on 0MQ project [1] as well as
+   of ongoing work on Linux kernel implementation of scalability
+   layer [2].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sustrik                  Expires October 3, 2011                [Page 6]
+
+Internet-Draft               SP Requirements                  April 2011
+
+
+4.  IANA Considerations
+
+   This memo includes no request to IANA.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sustrik                  Expires October 3, 2011                [Page 7]
+
+Internet-Draft               SP Requirements                  April 2011
+
+
+5.  Security Considerations
+
+   This memo proposes a system for communication between multiple
+   endpoints.  Thus, it does not map naturally to connection-based
+   security mechanisms that assume exactly two endpoints.  Care should
+   be taken to explain how security mechanisms offered by underlying
+   layers can be leveraged in such a system and/or provide a guidelines
+   for building security solutions on top of it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sustrik                  Expires October 3, 2011                [Page 8]
+
+Internet-Draft               SP Requirements                  April 2011
+
+
+Author's Address
+
+   Martin Sustrik (editor)
+   Stropkovska 9
+   Bratislava  82103
+   Slovakia
+
+   Phone: +421 908 714 885
+   Email: sustrik@250bpm.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sustrik                  Expires October 3, 2011                [Page 9]
+
+Internet-Draft               SP Requirements                  April 2011
+
+
+Full Copyright Statement
+
+   Copyright (C) The IETF Trust (2011).
+
+   This document is subject to the rights, licenses and restrictions
+   contained in BCP 78, and except as set forth therein, the authors
+   retain all their rights.
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY, THE IETF TRUST AND
+   THE INTERNET ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF
+   THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Intellectual Property
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+
+
+
+
+
+
+
+
+
+
+Sustrik                  Expires October 3, 2011               [Page 10]
+
