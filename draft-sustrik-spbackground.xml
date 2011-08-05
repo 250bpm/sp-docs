@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+
+<rfc category="info" docName="draft-sustrik-spbackground-01" ipr="full3978">
+
+  <front>
+
+    <title abbrev="SP Background">
+    Background for Scalability Layer/Protocol
+    </title>
+
+    <author fullname="Martin Sustrik" initials="M." role="editor"
+            surname="Sustrik">
+      <address>
+        <postal>
+          <street>Stropkovska 9</street>
+          <code>82103</code>
+          <city>Bratislava</city>
+          <country>Slovakia</country>
+        </postal>
+        <phone>+421 908 714 885</phone>
+        <email>sustrik@250bpm.com</email>
+      </address>
+    </author>
+
+    <date month="August" year="2011" />
+
+    <area>Applications</area>
+    <workgroup>Internet Engineering Task Force</workgroup>
+
+    <keyword>distributed computing</keyword>
+    <keyword>scalability</keyword>
+
+    <abstract>
+      <t>TODO</t>
+    </abstract>
+
+  </front>
+
+  <middle>
+
+    <section title="Introduction">
+
+      <t>The world of Internet is moving in a very specific direction.
+      As clients are almost constantly online, the need for client-side
+      software diminishes. Thin client becomes the norm. Users are
+      happy to lose the control of their data and software just to get
+      rid of the need for administration. Service providers, on the
+      other hand, are happy to trade thick clients for extremely low
+      time-to-market provided by application executed in the browser,
+      with client-side code downloaded just in time from the server.
+      </t>
+
+      <t>In short, the world looks more and more like a collection of
+      centralised services, each forming its own star-like topology,
+      service provider being in the middle and thin clients on the
+      edges.</t>
+
+      <t>This trend is further amplified by the fact that no two services
+      are exactly the same. There's not much point in designing public
+      protocols to allow distribution of a service that's provided by a
+      single provider or maybe a handful of providers at best.</t>
+
+      <t>IETF already reflects this trend. As 
+      <eref target="http://tools.ietf.org/html/draft-tschofenig-post-standardization-00">
+      "Web Applications: Trends and Implications"</eref> Internet draft
+      says: "In a nutshell, there is a certain class of applications for
+      which the standardization need is diminishing: chances are good
+      that your standardization work will not be relevant in
+      such an environment."</t>
+
+      <t>However, there's a different trend emerging behind the scenes.
+      There's an increased need for services to use other services.
+      It often makes sense to offload a specific functionality to an
+      online service and focus on what you are good at instead of
+      competing with existing service providers in the functionality you
+      are not expert at and which you are probably not even
+      interested in. Even more importantly, by using other services you
+      can reach the users centered around those services, which in turn
+      means getting a traction far more quickly than you would get
+      marketing the product in the old-fashioned way. Finally, automated
+      access to services allows for combining multiple services in an
+      innovative way to deliver added value to the user.</t>
+
+      <t>All these trends are already visible in the online world:
+      software-as-a-service paradigm, delivering applications via social
+      networking sites, just-in-time serving of ads provided by external
+      companies, migrating data between different online services etc.
+      </t>
+
+      <t>Given that services using other services require much more
+      precise contract than human beings who are generally all right
+      with loosely defined "graphical user interface", these new trends
+      lead to re-emergence of protocols, although in a slightly mutated
+      manner. Online services already provide "APIs" for developers to
+      hook in. Unfortunately, these are entirely ad hoc. The same
+      functionality is re-invented and re-implemented over and over
+      again. The APIs tend to be buggy and insecure. The interactions
+      with underlying network is almost universally ignored.</t>
+
+      <t>Thus, it seems there's a need for standardised
+      application-level protocols here, however, not the classic
+      application protocols that convey business logic -- the business
+      logic is different for each service anyway -- but protocols to
+      handle pieces of functionality that are common to large number
+      of services.</t>
+
+      <t>Such functionality invariably has to deal with the most
+      low-level aspects of the application protocols, namely abstraction
+      of the underlying network and interaction with it as well as the
+      generic communication patterns between services.</t>
+
+      <t>This memo provides a background, both historic and technical,
+      and a rationale for such a layer and discusses some of the
+      associated use cases.</t>
+
+    </section>
+
+    <section anchor="IANA" title="IANA Considerations">
+      <t>This memo includes no request to IANA.</t>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>This memo has no security considerations.</t>
+    </section>
+
+  </middle>
+
+</rfc>
+
+
