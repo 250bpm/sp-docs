@@ -2,9 +2,9 @@
 
 
 Internet Engineering Task Force                          M. Sustrik, Ed.
-Internet-Draft                                            August 5, 2011
+Internet-Draft                                            August 7, 2011
 Intended status: Informational
-Expires: February 6, 2012
+Expires: February 8, 2012
 
 
                Background for Scalability Layer/Protocol
@@ -31,7 +31,7 @@ Status of this Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on February 6, 2012.
+   This Internet-Draft will expire on February 8, 2012.
 
 
 
@@ -52,7 +52,7 @@ Status of this Memo
 
 
 
-Sustrik                 Expires February 6, 2012                [Page 1]
+Sustrik                 Expires February 8, 2012                [Page 1]
 
 Internet-Draft                SP Background                  August 2011
 
@@ -99,7 +99,7 @@ Internet-Draft                SP Background                  August 2011
    All these trends are already visible in the online world: software-
    as-a-service paradigm, delivering applications via social networking
    sites, just-in-time serving of ads provided by external companies,
-   migrating data between different online services etc.
+   mashups, migrating data between different online services etc.
 
    Given that services using other services require much more precise
    contract than human beings who are generally all right with loosely
@@ -108,7 +108,7 @@ Internet-Draft                SP Background                  August 2011
 
 
 
-Sustrik                 Expires February 6, 2012                [Page 2]
+Sustrik                 Expires February 8, 2012                [Page 2]
 
 Internet-Draft                SP Background                  August 2011
 
@@ -164,12 +164,124 @@ Internet-Draft                SP Background                  August 2011
 
 
 
-Sustrik                 Expires February 6, 2012                [Page 3]
+Sustrik                 Expires February 8, 2012                [Page 3]
 
 Internet-Draft                SP Background                  August 2011
 
 
-2.  IANA Considerations
+2.  History
+
+   Historically, there are two large trends in designing the generic
+   "middleware" layer to exist between netowrking stack and the
+   applications.
+
+   First, there is a tradition of "message-oriented middleware" or
+   "enterprise messaging" if you like.  It starts in 80's when gradual
+   transition from mainframes to PCs triggered the first generation of
+   messaging systems.
+
+   The enterprise nature of these system gave rise to their two main
+   traits: extensive featureset and assumption of central control.
+
+   By the start of new millenia messaging middleware have accumulated
+   large set of disparate functionality, ranging from data serialisation
+   and persistence (storing message queues in a database) to complex
+   message filtering algorithms, wide range of security techniques,
+   different routing algorithms, data transformation services,
+   distributed transactions, sophisticated tools for governance and
+   monitoring, enterprise application integration and so on.
+
+   All the above is further done with the assumption that the whole
+   system is deployed by a single entity (company) and that it is
+   completely under control of its administrators.  Consequently,
+   there's little focus on providing reliability and robustness needed
+   in loosely coupled, multi-tenant and often malicious Internet
+   environment.
+
+   Traditionally, the market have been dominated by proprietary products
+   such as TIBCO's RendezVous, IBM's WebSphereMQ.  However, early 90's
+   witness the attempts to standardise the middleware layer.  They bring
+   object-orientedness to the design and result in standards such as
+   CORBA (1991) and Microsoft's COM (1992).  While these standards were
+   widely used they haven't replaced the traditional business messaging
+   solutions, rather they created a niche of their own.
+
+   Standardisation of traditional message-oriented middleware began in
+   2001 with JMS standard describing Java APIs to access messaging
+   functionaliy.  In 2006, a standrd wire-level protocol for enterprise
+   messaging, AMQP, was published.
+
+   In parallel, HPC industry have developed standards of their own.  MPI
+   (1994) is a de facto API standard for communication between
+   applications running on supercomputers and computational clusters.
+   The basic principles are similar to enterprise messaging, most
+   importantly the assumption of cetralised and fully controled
+   environment.
+
+
+
+Sustrik                 Expires February 8, 2012                [Page 4]
+
+Internet-Draft                SP Background                  August 2011
+
+
+   The second big trend arises from the need to use software services
+   over the Internet, specifically to use world-wide web as a
+   application-to-application messaging platform rather than a way to
+   deliver documents and GUIs to the end users.
+
+   When compared to the enterprise messaging, the web services
+   infrastructure tends to be more leight-weight on functionality while
+   it focuses more on features such as addressing and discovery, that
+   are crucial in loosely coupled distributed environment with no
+   central authority.
+
+   TODO: History of SOAP, WS etc.
+
+   On more theoretical level, SOA (service-oriented architecture) is
+   much promoted since beginning of the century as a way to think about
+   distributed computing as a set of coarse-grained interoperable
+   services that can be quickly composed into novel applications.
+
+   REST architecture (2000), on the other hand, focuses on the concept
+   of "resource" living on the network while distributed computing takes
+   the form of accessing and manipulating the resource.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sustrik                 Expires February 8, 2012                [Page 5]
+
+Internet-Draft                SP Background                  August 2011
+
+
+3.  IANA Considerations
 
    This memo includes no request to IANA.
 
@@ -220,12 +332,12 @@ Internet-Draft                SP Background                  August 2011
 
 
 
-Sustrik                 Expires February 6, 2012                [Page 4]
+Sustrik                 Expires February 8, 2012                [Page 6]
 
 Internet-Draft                SP Background                  August 2011
 
 
-3.  Security Considerations
+4.  Security Considerations
 
    This memo has no security considerations.
 
@@ -276,7 +388,7 @@ Internet-Draft                SP Background                  August 2011
 
 
 
-Sustrik                 Expires February 6, 2012                [Page 5]
+Sustrik                 Expires February 8, 2012                [Page 7]
 
 Internet-Draft                SP Background                  August 2011
 
@@ -332,7 +444,7 @@ Author's Address
 
 
 
-Sustrik                 Expires February 6, 2012                [Page 6]
+Sustrik                 Expires February 8, 2012                [Page 8]
 
 Internet-Draft                SP Background                  August 2011
 
@@ -388,5 +500,5 @@ Intellectual Property
 
 
 
-Sustrik                 Expires February 6, 2012                [Page 7]
+Sustrik                 Expires February 8, 2012                [Page 9]
 

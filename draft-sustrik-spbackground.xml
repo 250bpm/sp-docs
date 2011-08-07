@@ -85,8 +85,8 @@
       <t>All these trends are already visible in the online world:
       software-as-a-service paradigm, delivering applications via social
       networking sites, just-in-time serving of ads provided by external
-      companies, migrating data between different online services etc.
-      </t>
+      companies, mashups, migrating data between different online
+      services etc.</t>
 
       <t>Given that services using other services require much more
       precise contract than human beings who are generally all right
@@ -113,6 +113,83 @@
       <t>This memo provides a background, both historic and technical,
       and a rationale for such a layer and discusses some of the
       associated use cases.</t>
+
+    </section>
+
+    <section title="History">
+
+    <t>Historically, there are two large trends in designing the
+    generic "middleware" layer to exist between netowrking stack and
+    the applications.</t>
+
+    <t>First, there is a tradition of "message-oriented middleware" or
+    "enterprise messaging" if you like. It starts in 80's when gradual
+    transition from mainframes to PCs triggered the first generation
+    of messaging systems.</t>
+
+    <t>The enterprise nature of these system gave rise to their two
+    main traits: extensive featureset and assumption of central
+    control.</t>
+
+    <t>By the start of new millenia messaging middleware have
+    accumulated large set of disparate functionality, ranging from
+    data serialisation and persistence (storing message queues in
+    a database) to complex message filtering algorithms,  wide
+    range of security techniques, different routing algorithms, data
+    transformation services, distributed transactions, sophisticated
+    tools for governance and monitoring, enterprise application
+    integration and so on.</t>
+
+    <t>All the above is further done with the assumption that the whole
+    system is deployed by a single entity (company) and that it is
+    completely under control of its administrators. Consequently,
+    there's little focus on providing reliability and robustness needed
+    in loosely coupled, multi-tenant and often malicious Internet
+    environment.</t>
+
+    <t>Traditionally, the market have been dominated by proprietary
+    products such as TIBCO's RendezVous, IBM's WebSphereMQ. However,
+    early 90's witness the attempts to standardise the middleware layer.
+    They bring object-orientedness to the design and result in standards
+    such as CORBA (1991) and Microsoft's COM (1992). While these
+    standards were widely used they haven't replaced the traditional
+    business messaging solutions, rather they created a niche of their
+    own.</t>
+
+    <t>Standardisation of traditional message-oriented middleware
+    began in 2001 with JMS standard describing Java APIs to access
+    messaging functionaliy. In 2006, a standrd wire-level protocol for
+    enterprise messaging, AMQP, was published.</t>
+
+    <t>In parallel, HPC industry have developed standards of their own.
+    MPI (1994) is a de facto API standard for communication between
+    applications running on supercomputers and computational clusters.
+    The basic principles are similar to enterprise messaging, most
+    importantly the assumption of cetralised and fully controled
+    environment.</t>
+
+    <t>The second big trend arises from the need to use software
+    services over the Internet, specifically to use world-wide web as a
+    application-to-application messaging platform rather than a way
+    to deliver documents and GUIs to the end users.</t>
+
+    <t>When compared to the enterprise messaging, the web services
+    infrastructure tends to be more leight-weight on functionality while
+    it focuses more on features such as addressing and discovery, that
+    are crucial in loosely coupled distributed environment with no
+    central authority.</t>
+
+    <t>TODO: History of SOAP, WS etc.</t>
+
+    <t>On more theoretical level, SOA (service-oriented architecture)
+    is much promoted since beginning of the century as a way to think
+    about distributed computing as a set of coarse-grained interoperable
+    services that can be quickly composed into novel applications.</t>
+
+    <t>REST architecture (2000), on the other hand, focuses on the
+    concept of "resource" living on the network while distributed
+    computing takes the form of accessing and manipulating
+    the resource.</t>
 
     </section>
 
