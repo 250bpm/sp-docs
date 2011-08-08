@@ -2,9 +2,9 @@
 
 
 Internet Engineering Task Force                          M. Sustrik, Ed.
-Internet-Draft                                            August 7, 2011
+Internet-Draft                                            August 8, 2011
 Intended status: Informational
-Expires: February 8, 2012
+Expires: February 9, 2012
 
 
                Background for Scalability Layer/Protocol
@@ -31,7 +31,7 @@ Status of this Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on February 8, 2012.
+   This Internet-Draft will expire on February 9, 2012.
 
 
 
@@ -52,7 +52,7 @@ Status of this Memo
 
 
 
-Sustrik                 Expires February 8, 2012                [Page 1]
+Sustrik                 Expires February 9, 2012                [Page 1]
 
 Internet-Draft                SP Background                  August 2011
 
@@ -87,13 +87,12 @@ Internet-Draft                SP Background                  August 2011
    There's an increased need for services to use other services.  It
    often makes sense to offload a specific functionality to an online
    service and focus on what you are good at instead of competing with
-   existing service providers in the functionality you are not expert at
-   and which you are probably not even interested in.  Even more
-   importantly, by using other services you can reach the users centered
-   around those services, which in turn means getting a traction far
-   more quickly than you would get marketing the product in the old-
-   fashioned way.  Finally, automated access to services allows for
-   combining multiple services in an innovative way to deliver added
+   existing service providers in the functionality you are not expert
+   at.  Even more importantly, by using other services you can reach the
+   users centered around those services, which in turn means getting a
+   traction far more quickly than you would get marketing the product in
+   the old-fashioned way.  Finally, automated access to services allows
+   for combining multiple services in an innovative way to deliver added
    value to the user.
 
    All these trends are already visible in the online world: software-
@@ -105,15 +104,15 @@ Internet-Draft                SP Background                  August 2011
    contract than human beings who are generally all right with loosely
    defined "graphical user interface", these new trends lead to re-
    emergence of protocols, although in a slightly mutated manner.
+   Online services already provide "APIs" for developers to hook in.
 
 
 
-Sustrik                 Expires February 8, 2012                [Page 2]
+Sustrik                 Expires February 9, 2012                [Page 2]
 
 Internet-Draft                SP Background                  August 2011
 
 
-   Online services already provide "APIs" for developers to hook in.
    Unfortunately, these are entirely ad hoc.  The same functionality is
    re-invented and re-implemented over and over again.  The APIs tend to
    be buggy and insecure.  The interactions with underlying network is
@@ -164,7 +163,8 @@ Internet-Draft                SP Background                  August 2011
 
 
 
-Sustrik                 Expires February 8, 2012                [Page 3]
+
+Sustrik                 Expires February 9, 2012                [Page 3]
 
 Internet-Draft                SP Background                  August 2011
 
@@ -172,7 +172,7 @@ Internet-Draft                SP Background                  August 2011
 2.  History
 
    Historically, there are two large trends in designing the generic
-   "middleware" layer to exist between netowrking stack and the
+   "middleware" layer that lives between netowrking stack and the
    applications.
 
    First, there is a tradition of "message-oriented middleware" or
@@ -199,7 +199,7 @@ Internet-Draft                SP Background                  August 2011
    environment.
 
    Traditionally, the market have been dominated by proprietary products
-   such as TIBCO's RendezVous, IBM's WebSphereMQ.  However, early 90's
+   such as TIBCO's RendezVous or IBM's WebSphereMQ.  However, early 90's
    witness the attempts to standardise the middleware layer.  They bring
    object-orientedness to the design and result in standards such as
    CORBA (1991) and Microsoft's COM (1992).  While these standards were
@@ -211,37 +211,37 @@ Internet-Draft                SP Background                  August 2011
    functionaliy.  In 2006, a standrd wire-level protocol for enterprise
    messaging, AMQP, was published.
 
-   In parallel, HPC industry have developed standards of their own.  MPI
-   (1994) is a de facto API standard for communication between
-   applications running on supercomputers and computational clusters.
-   The basic principles are similar to enterprise messaging, most
-   importantly the assumption of cetralised and fully controled
-   environment.
+   As a side note it should be said that HPC industry have developed
+   standards of their own.  MPI (1994) is a de facto API standard for
+   communication between applications running on supercomputers and
+   computational clusters.  The basic principles are similar to
+   enterprise messaging, most importantly the assumption of cetralised
+   and fully controled environment.
 
 
 
-Sustrik                 Expires February 8, 2012                [Page 4]
+Sustrik                 Expires February 9, 2012                [Page 4]
 
 Internet-Draft                SP Background                  August 2011
 
 
-   The second big trend arises from the need to use software services
-   over the Internet, specifically to use world-wide web as a
-   application-to-application messaging platform rather than a way to
-   deliver documents and GUIs to the end users.
+   The second big trend in messaging arises from the need to use
+   software services over the Internet, specifically to use world-wide
+   web as a application-to-application messaging platform rather than a
+   way to deliver documents and GUIs to the end users.
 
    When compared to the enterprise messaging, the web services
    infrastructure tends to be more leight-weight on functionality while
    it focuses more on features such as addressing and discovery, that
-   are crucial in loosely coupled distributed environment with no
-   central authority.
+   are crucial in loosely coupled distributed environment.
 
    TODO: History of SOAP, WS etc.
 
    On more theoretical level, SOA (service-oriented architecture) is
    much promoted since beginning of the century as a way to think about
-   distributed computing as a set of coarse-grained interoperable
-   services that can be quickly composed into novel applications.
+   distributed computing.  It views the world as a set of coarse-grained
+   interoperable services that can be quickly composed into novel
+   applications.
 
    REST architecture (2000), on the other hand, focuses on the concept
    of "resource" living on the network while distributed computing takes
@@ -276,12 +276,68 @@ Internet-Draft                SP Background                  August 2011
 
 
 
-Sustrik                 Expires February 8, 2012                [Page 5]
+Sustrik                 Expires February 9, 2012                [Page 5]
 
 Internet-Draft                SP Background                  August 2011
 
 
-3.  IANA Considerations
+3.  The network
+
+   Traditionally, interactions between the messaging layer and the low-
+   level network stack have been minimal.  It is commonly assumed that:
+
+   1.  The performance of messaging is not as critical as to need a
+       support from the underlying network (traffic shaping, using
+       multicast instead of unicast, setting ToS bits or similar).
+
+   2.  Setting up the messaging infrastructure is not a task for the
+       network administrator, rather, it should be completely
+       transparent to the network administrator.
+
+   Thus, it is common that messaging solutions use protocols that are
+   not friendly to the underlying network, whether it means using
+   formatting that is not easily parsed in the hardware, such as XML, or
+   simply funnelling all the disparate messaging traffic through a
+   single TCP port, even a single TCP connection, which virtually
+   disables any fine-grained monitoring, QoS or traffic shaping on the
+   network layer.
+
+   There is one specific breed of messaging solutions though that takes
+   the underlying network into account.  In stock trading industry
+   there's a big emphasis on performance.  Microseconds make difference
+   between executed and failed trade and translate directly into
+   revenue.  Thus, the latencies introduced by the network are of utmost
+   interest.
+
+   Messaging solutions aimed at stock trading market are rather
+   different from the rest of the ecosystem.  They often use UDP instead
+   of TCP and multicast instead of unicast to disseminate the stock
+   quotes.  Solutions such as PGM [refs.RFC3208] are used primarily in
+   stock trading industry.  It's even common to use specialised hardware
+   devices (network accelerators, dedicated FPGAs etc.) to achieve
+   better performance.
+
+   In any case, if we believe that online services are going to
+   proliferate in the future and that significant portion of Internet
+   traffic is going to be related to online services, ability to
+   administer the traffic on the network level is going to become
+   increasingly significant.
+
+
+
+
+
+
+
+
+
+
+Sustrik                 Expires February 9, 2012                [Page 6]
+
+Internet-Draft                SP Background                  August 2011
+
+
+4.  IANA Considerations
 
    This memo includes no request to IANA.
 
@@ -332,12 +388,12 @@ Internet-Draft                SP Background                  August 2011
 
 
 
-Sustrik                 Expires February 8, 2012                [Page 6]
+Sustrik                 Expires February 9, 2012                [Page 7]
 
 Internet-Draft                SP Background                  August 2011
 
 
-4.  Security Considerations
+5.  Security Considerations
 
    This memo has no security considerations.
 
@@ -388,7 +444,63 @@ Internet-Draft                SP Background                  August 2011
 
 
 
-Sustrik                 Expires February 8, 2012                [Page 7]
+Sustrik                 Expires February 9, 2012                [Page 8]
+
+Internet-Draft                SP Background                  August 2011
+
+
+6.  References
+
+   [refs.RFC3208]
+              Speakman, T., "PGM Reliable Transport Protocol
+              Specification", December 2001.
+
+   [1]  <http://tools.ietf.org/html/
+        draft-tschofenig-post-standardization-00>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sustrik                 Expires February 9, 2012                [Page 9]
 
 Internet-Draft                SP Background                  August 2011
 
@@ -444,7 +556,7 @@ Author's Address
 
 
 
-Sustrik                 Expires February 8, 2012                [Page 8]
+Sustrik                 Expires February 9, 2012               [Page 10]
 
 Internet-Draft                SP Background                  August 2011
 
@@ -500,5 +612,5 @@ Intellectual Property
 
 
 
-Sustrik                 Expires February 8, 2012                [Page 9]
+Sustrik                 Expires February 9, 2012               [Page 11]
 

@@ -56,10 +56,11 @@
       service provider being in the middle and thin clients on the
       edges.</t>
 
-      <t>This trend is further amplified by the fact that no two services
-      are exactly the same. There's not much point in designing public
-      protocols to allow distribution of a service that's provided by a
-      single provider or maybe a handful of providers at best.</t>
+      <t>This trend is further amplified by the fact that no two
+      services are exactly the same. There's not much point in designing
+      public protocols to allow distribution of a service that's
+      provided by a single provider or maybe a handful of providers at
+      best.</t>
 
       <t>IETF already reflects this trend. As 
       <eref target="http://tools.ietf.org/html/draft-tschofenig-post-standardization-00">
@@ -74,10 +75,9 @@
       It often makes sense to offload a specific functionality to an
       online service and focus on what you are good at instead of
       competing with existing service providers in the functionality you
-      are not expert at and which you are probably not even
-      interested in. Even more importantly, by using other services you
-      can reach the users centered around those services, which in turn
-      means getting a traction far more quickly than you would get
+      are not expert at. Even more importantly, by using other services
+      you can reach the users centered around those services, which in
+      turn means getting a traction far more quickly than you would get
       marketing the product in the old-fashioned way. Finally, automated
       access to services allows for combining multiple services in an
       innovative way to deliver added value to the user.</t>
@@ -119,7 +119,7 @@
     <section title="History">
 
     <t>Historically, there are two large trends in designing the
-    generic "middleware" layer to exist between netowrking stack and
+    generic "middleware" layer that lives between netowrking stack and
     the applications.</t>
 
     <t>First, there is a tradition of "message-oriented middleware" or
@@ -148,7 +148,7 @@
     environment.</t>
 
     <t>Traditionally, the market have been dominated by proprietary
-    products such as TIBCO's RendezVous, IBM's WebSphereMQ. However,
+    products such as TIBCO's RendezVous or IBM's WebSphereMQ. However,
     early 90's witness the attempts to standardise the middleware layer.
     They bring object-orientedness to the design and result in standards
     such as CORBA (1991) and Microsoft's COM (1992). While these
@@ -161,36 +161,84 @@
     messaging functionaliy. In 2006, a standrd wire-level protocol for
     enterprise messaging, AMQP, was published.</t>
 
-    <t>In parallel, HPC industry have developed standards of their own.
-    MPI (1994) is a de facto API standard for communication between
-    applications running on supercomputers and computational clusters.
-    The basic principles are similar to enterprise messaging, most
-    importantly the assumption of cetralised and fully controled
-    environment.</t>
+    <t>As a side note it should be said that HPC industry have developed
+    standards of their own. MPI (1994) is a de facto API standard for
+    communication between applications running on supercomputers and
+    computational clusters. The basic principles are similar to
+    enterprise messaging, most importantly the assumption of cetralised
+    and fully controled environment.</t>
 
-    <t>The second big trend arises from the need to use software
-    services over the Internet, specifically to use world-wide web as a
-    application-to-application messaging platform rather than a way
-    to deliver documents and GUIs to the end users.</t>
+    <t>The second big trend in messaging arises from the need to use
+    software services over the Internet, specifically to use world-wide
+    web as a application-to-application messaging platform rather than
+    a way to deliver documents and GUIs to the end users.</t>
 
     <t>When compared to the enterprise messaging, the web services
     infrastructure tends to be more leight-weight on functionality while
     it focuses more on features such as addressing and discovery, that
-    are crucial in loosely coupled distributed environment with no
-    central authority.</t>
+    are crucial in loosely coupled distributed environment.</t>
 
     <t>TODO: History of SOAP, WS etc.</t>
 
     <t>On more theoretical level, SOA (service-oriented architecture)
     is much promoted since beginning of the century as a way to think
-    about distributed computing as a set of coarse-grained interoperable
-    services that can be quickly composed into novel applications.</t>
+    about distributed computing. It views the world as a set of
+    coarse-grained interoperable services that can be quickly composed
+    into novel applications.</t>
 
     <t>REST architecture (2000), on the other hand, focuses on the
     concept of "resource" living on the network while distributed
     computing takes the form of accessing and manipulating
     the resource.</t>
 
+    </section>
+
+    <section title="The network">
+
+    <t>Traditionally, interactions between the messaging layer and the
+    low-level network stack have been minimal. It is commonly assumed
+    that:
+
+    <list style="numbers">
+        <t>The performance of messaging is not as critical as to need a
+        support from the underlying network (traffic shaping, using
+        multicast instead of unicast, setting ToS bits or similar).</t>
+        <t>Setting up the messaging infrastructure is not a task for
+        the network administrator, rather, it should be completely
+        transparent to the network administrator.</t>
+    </list>
+
+    </t>
+
+    <t>Thus, it is common that messaging solutions use protocols that
+    are not friendly to the underlying network, whether it means using
+    formatting that is not easily parsed in the hardware, such as XML,
+    or simply funnelling all the disparate messaging traffic through a
+    single TCP port, even a single TCP connection, which virtually
+    disables any fine-grained monitoring, QoS or traffic shaping on the
+    network layer.</t>
+
+    <t>There is one specific breed of messaging solutions though that
+    takes the underlying network into account. In stock trading industry
+    there's a big emphasis on performance. Microseconds make difference
+    between executed and failed trade and translate directly into
+    revenue. Thus, the latencies introduced by the network are of
+    utmost interest.</t>
+
+    <t>Messaging solutions aimed at stock trading market are rather
+    different from the rest of the ecosystem. They often use UDP instead
+    of TCP and multicast instead of unicast to disseminate the stock
+    quotes. Solutions such as <xref target="refs.RFC3208">PGM</xref>
+    are used primarily in stock trading industry. It's even
+    common to use specialised hardware devices (network accelerators,
+    dedicated FPGAs etc.) to achieve better performance.</t>
+
+    <t>In any case, if we believe that online services are going to
+    proliferate in the future and that significant portion of Internet
+    traffic is going to be related to online services, ability to
+    administer the traffic on the network level is going to become
+    increasingly significant.</t>
+    
     </section>
 
     <section anchor="IANA" title="IANA Considerations">
@@ -202,6 +250,20 @@
     </section>
 
   </middle>
+
+  <back>
+    <references>
+      <reference anchor="refs.RFC3208">
+        <front>
+            <title>PGM Reliable Transport Protocol Specification</title>
+            <author initials="T." surname="Speakman"
+                    fullname="T. Speakman et al">
+            </author>
+            <date month="December" year="2001" />
+        </front>
+      </reference>
+    </references>
+  </back>
 
 </rfc>
 
