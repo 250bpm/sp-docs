@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+
+<rfc category="info" docName="draft-sustrik-spframing-01" ipr="full3978">
+
+  <front>
+
+    <title abbrev="SP Framing">
+    Scalability Protocol Framing
+    </title>
+
+    <author fullname="Martin Sustrik" initials="M." role="editor"
+            surname="Sustrik">
+      <address>
+        <postal>
+          <street>Stropkovska 9</street>
+          <code>82103</code>
+          <city>Bratislava</city>
+          <country>Slovakia</country>
+        </postal>
+        <phone>+421 908 714 885</phone>
+        <email>sustrik@250bpm.com</email>
+      </address>
+    </author>
+
+    <date month="August" year="2011" />
+
+    <area>Applications</area>
+    <workgroup>Internet Engineering Task Force</workgroup>
+
+    <keyword>distributed computing</keyword>
+    <keyword>scalability</keyword>
+
+    <abstract>
+      <t>This doucment summarises requirements for SP framing and proposes
+      concrete framing specifications for several underlying transports.</t>
+    </abstract>
+
+  </front>
+
+  <middle>
+
+    <section title="Introduction">
+      <t>TODO</t>
+    </section>
+
+    <section title = "Requirements">
+       <t>
+        <list style="numbers">
+
+        <t>Unidirectional data transfer
+        <vspace blankLines="1" />
+        Transfering data is the basic service required from the framing layer.
+        Framing layer in turn delegates the task to underlying transport
+        protocol, such as TCP. The requirement explicitly asks for
+        uni-directional transfer, so that uni-directional L4 transports, such as
+        UDP or PGM can be used. The bi-directional L4 transports can be
+        interpreted as pairs of uni-directional transports. Also, there's no
+        requirement for the transfer to be reliable. Underlying transport can be
+        unreliable (UDP). It's not framing layer's task to provide reliability
+        on top of unreliable transports.</t>
+
+        <t>Message delimitation
+        <vspace blankLines="1" />
+        Framing layer should provide messages rather than stream of bytes or
+        packets. Message is an opaque sequence of bytes. Note that if an
+        underlying L4 transport provides message delimitation itself (SCTP)
+        there's no need for framing layer to do any additional work.</t>
+
+        <t>Message segmentation
+        <vspace blankLines="1" />
+        It should be possible to pass arbitrarily long messages. The limit for
+        message size should be at least 2^64 bytes, which in any practical
+        regard can be considered to be infinity. Many L4 transports handle
+        segmentation themselves (TCP, SCTP) in which case there's no need to
+        implement the functionality in SP framing layer. The need for message
+        segmentation is in most cases restricted to packet-based underlying
+        transports.</t>
+
+        <t>Message atomicity
+        <vspace blankLines="1" />
+        Framing layer should ensure that layers on top get either entire message
+        or no message at all. For example, with multicast-based L4 transports,
+        when late joiner joins the feed framing layer should take care not to
+        start delivering the trailing part of the message currently in flow.</t>
+
+        </list>
+       </t>
+    </section>
+
+    <section title = "Additional considerations">
+
+        <t>Framing layer should respect the design decisions made in the
+        underlying protocol and not try to fix the -- whether real or
+        percieved -- problems in the protocol.</t>
+
+        <t>For example, PGM doesn't allow for batching multiple messages (APDUs)
+        into a single packet (TPDU). While requiring a separate packet for each
+        message may seem to be inefficient, especially in the case of rapid flow
+        of small messages, SP framing layer should not try to compensate for PGM
+        deficiency and provide the batching support layered on top of PGM.</t>
+
+        <t>However, when framing layer implements a feature that does not exist
+        on the layer of the underlying transport (for example, when message 
+        segmentation is implemented on top of UDP) it should take care to choose
+        the most performance-friendly designs -- keep in mind that SP is meant
+        to operate in high-performance environments, passing huge volumes of
+        data at wire-speed.</t>
+
+        <t>Specifically, the protocol should contain no bloat. Data
+        representations should be minimal (say binary instead of text) to
+        minimise bandwidth usage as well as to make the parsing simpler.</t>
+
+        <t>Similarly -- and if at all possible -- data fields should be located
+        on fixed offsets in the packets and should be aligned properly to make
+        processing of the packets simpler.</t>
+
+        <t>To make the protocol zero-copy friendly, it should take care to
+        minimise the amount of copying to be done by the network stack. In
+        practical terms it means that two bytes that should end up one beside
+        another in memory should, as far as possible, be adjacent on the wire.
+        </t>
+
+        <t>Any fields defined by the framing layer should be placed in the
+        beginning of the message or packet so that any associated processing can
+        start even before complete message or packet is received.</t>
+
+    </section>
+
+    <section title = "Specification">
+
+        <t>SP is meant to work on top of multiple underlying transports, thus
+        there is no single framing layer. This document specifies framing
+        protocols for some common L4 transports, however, the list should be
+        considered incomplete and open to additions.</t>
+
+        <section title = "TCP">
+
+            <t>On top of TCP SP messages are encoded as netstrings. They consist
+            of unsigned 64-bit integer in network byte order, which determines
+            the size of the following data. The opaque data follow directly
+            after the size field.</t>
+
+            <t>SP/TCP implementations are responsible for ensuring atomicity,
+            i.e. for dropping incomplete message when disconnection happens.</t>
+
+            <t>Note that SP/TCP framing can be used for any underlying transport
+            protocol with bytestream semantics (SOCK_STREAM) such as SDP or UDT.
+            </t>
+
+            <t>64-bit size field may seem excessive, especially in the case of
+            huge load of small messages. However, experiments with optional
+            shortening of size to 8 bits (use 8-bit size, escape to 64-bit size
+            if messages size is over 254 bytes) have shown that for large
+            messages the portion of the message consumed by size itself is so
+            low that it has no measurable effect on the performance. For small
+            messages, on the other hand, the throughput is CPU-bound --
+            especially when taking into consideration that there's per-message
+            work to be done on upper layers as well -- and additional bandwidth
+            required by 64-bit size field has thus no impact on the performance.
+            Moreover, using this kind of 8-or-64-bit size field results in
+            variable length of message headers which are more complex and
+            possibly slower to parse and manipulate.</t>
+
+        </section>
+
+        <section title = "SCTP">
+
+            <t>SCTP fullfils all the framing requirements as defined by this
+            document. Thus, SP/SCTP framing layer requires no additional
+            functionality. In other words upper layers of SP can be built
+            directly on top of SCTP.</t>
+
+            <t>One issue to keep in mind is that SCTP partial delivery
+            feature breaks the message atomicity requirement and thus SP/SCTP
+            implementations should either avoid using it or ensure that
+            the incomplete messages are dropped and not passed to the upper
+            layers. The latter option is an optimisation. Choosing the former or
+            the latter is an implementation detail and has no effect on the
+            wire-level protocol.</t>
+
+        </section>
+
+        <section title = "UDP multicast">
+
+            <t>The framing for UDP multicast makes couple of assumptions:
+            First, the messages transfers are assumed to happen on a single
+            LAN, no multi-hop multicast is considered. Second, we assume that
+            there's only one sender per multicast group and UDP port on the LAN.
+            Finally, we assume that MTU of the LAN is known in advance and we
+            propose no mechanism for MTU discovery.
+            </t>
+
+            <t>SP messages are encoded as netstrings on top of UDP multicast.
+            They consist of unsigned 64-bit integer in network byte order, which
+            determines the size of the following data. The opaque data follow
+            directly after the size field.</t>
+
+            <t>The stream of these messages is then segmented to fit into UDP
+            packets. To ensure optimal throughput, the sending side should try
+            to fill the packets up to the MTU rather leaving them half-empty.
+            </t>
+
+            <t>Each packet is then prefixed by a header consisting of 32-bit
+            unsigned integer in network byte order representing sequence number
+            followed by 16-bit unsigned integer in network byte order
+            representing the offset of the first message in the packet.</t>
+
+            <t>Sender should start generating sequence numbers from zero.
+            Sequence number should be incremented by one for each subsequent
+            packet. When 2^32-1 is reached, sequence number overflows to zero.
+            </t>
+
+            <t>Using this algorithm we ensure that restarting of the sender
+            doesn't generate a sequence number that accidentally fits into the
+            sequence generated by the previous instance of the sender, unless
+            sequence number overflows and sender rastarts at the same moment.
+            </t>
+
+            <t>Sender should also fill the 'offset' field in the packet header
+            by the offset of the first message beginning in the packet. If
+            message beggining coincides with the beginning of the packet it
+            should be zero, etc. If there's no message beginning in the packet
+            (packet contains just a middle part of a larger message) the offset
+            field should be set to 0xffff.</t>
+
+            <t>Receiving application should check sequence numbers and if
+            unexpected sequence number arrives it should drop any half-received
+            message being processed, thus ensuring message atomicity. Further,
+            it should start receiving new message from the newly arrived packet.
+            To find the beginning of the message in the packet it should use
+            'offset' field in the packet header.</t>
+
+            <t>While the above algorithm is not meant to provide reliable
+            multicast, random reordering of packets by the network can cause
+            unnecessary message loss. To improve reliability, receivers may
+            implement small packet reordering buffer to correct packet
+            sequences. For example, message sequence 0, 2, 1, 3 would cause
+            message loss on each packet boundary, while a simple two packet
+            reordering buffer would ensure no message loss.</t>
+
+        </section>
+
+    </section>
+
+    <section anchor="IANA" title="IANA Considerations">
+      <t>This memo includes no request to IANA.</t>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>TODO</t>
+    </section>
+
+  </middle>
+
+</rfc>
+
