@@ -141,6 +141,14 @@
             the size of the following data. The opaque data follow directly
             after the size field.</t>
 
+            <figure>
+                <artwork>
+   +------------------+----------------------+
+   |  size  (64 bits) |         data         |
+   +------------------+----------------------+ 
+                </artwork>
+            </figure>
+
             <t>SP/TCP implementations are responsible for ensuring atomicity,
             i.e. for dropping incomplete message when disconnection happens.</t>
 
@@ -196,10 +204,29 @@
             determines the size of the following data. The opaque data follow
             directly after the size field.</t>
 
+            <figure>
+                <artwork>
+   +------------------+----------------------+
+   |  size  (64 bits) |         data         |
+   +------------------+----------------------+ 
+                </artwork>
+            </figure>
+
             <t>The stream of these messages is then segmented to fit into UDP
             packets. To ensure optimal throughput, the sending side should try
             to fill the packets up to the MTU rather leaving them half-empty.
             </t>
+
+            <figure>
+                <artwork>
+                              |
+    +------+--------------+---|---+-----------+
+    | size |     data     | si|ze |    data   |
+    +------+--------------+---|---+-----------+
+                              |
+              packet 1        |    packet 2
+                </artwork>
+            </figure>
 
             <t>Each packet is then prefixed by a header consisting of 32-bit
             unsigned integer in network byte order representing sequence number
@@ -223,6 +250,24 @@
             should be zero, etc. If there's no message beginning in the packet
             (packet contains just a middle part of a larger message) the offset
             field should be set to 0xffff.</t>
+
+            <figure>
+                <artwork>
+    +----------+---------------+------+--------------+----+
+    | seqnum=0 | offset=0x0000 | size |     data     | si |
+    +----------+---------------+------+--------------+----+
+
+    +----------+---------------+----+--------------+------+--------+
+    | seqnum=1 | offset=0x0018 | ze |     data     | size |     da |
+    +----------+---------------+----+--------------+------+--------+
+                       |                           ^
+                       +---------------------------+
+
+    +----------+---------------+--------------+
+    | seqnum=2 | offset=0xffff | ta           |
+    +----------+---------------+--------------+ 
+                </artwork>
+            </figure>
 
             <t>Receiving application should check sequence numbers and if
             unexpected sequence number arrives it should drop any half-received
